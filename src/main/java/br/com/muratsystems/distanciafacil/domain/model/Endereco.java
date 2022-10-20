@@ -18,7 +18,6 @@ public class Endereco {
 	private String uf;
 	private String pais;
 	private String cep;
-	private Coordenada latitude;
-	private Coordenada longitude;
+	private GeoLocalizacao geoLocalizacao;
 	
 }
