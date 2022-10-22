@@ -1,7 +1,6 @@
 package br.com.muratsystems.distanciafacil.domain.model;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +24,8 @@ public class GeoLocalizacaoServiceTest {
 		service.definirGeoLocalizacaoPorEndereco(endereco);
 		assertNotNull(endereco.getGeoLocalizacao(), "Localização não encontrada!");
 		if (endereco.getGeoLocalizacao() != null) {
-			assertNull(endereco.getGeoLocalizacao().getLatitude(), "Latitude não encontrada!");
-			assertNull(endereco.getGeoLocalizacao().getLongitude(), "Longitude não encontrada!");
+			assertNotNull(endereco.getGeoLocalizacao().getLatitude(), "Latitude não encontrada!");
+			assertNotNull(endereco.getGeoLocalizacao().getLongitude(), "Longitude não encontrada!");
 		}
 	}
 	

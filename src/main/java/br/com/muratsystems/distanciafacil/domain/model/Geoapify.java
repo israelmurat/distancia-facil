@@ -1,6 +1,6 @@
 package br.com.muratsystems.distanciafacil.domain.model;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,9 +10,8 @@ import lombok.ToString;
 
 @NoArgsConstructor @Getter @Setter 
 @ToString @EqualsAndHashCode
-public class GeoLocalizacao {
+public class Geoapify {
 
-	private BigDecimal latitude;
-	private BigDecimal longitude;
+	private List<ResultadoGeoapify> results;
 	
 }
