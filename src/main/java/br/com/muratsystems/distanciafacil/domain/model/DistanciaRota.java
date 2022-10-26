@@ -15,5 +15,6 @@ public class DistanciaRota {
 	private Endereco enderecoA;
 	private Endereco enderecoB;
 	private BigDecimal distanciaEntreEnderecos;
+	private String unidadeDistancia;
 	
 }

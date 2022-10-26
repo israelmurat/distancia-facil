@@ -1,4 +1,6 @@
-package br.com.muratsystems.distanciafacil.domain.model;
+package br.com.muratsystems.distanciafacil.geoapify.model;
+
+import java.util.List;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,9 +10,8 @@ import lombok.ToString;
 
 @NoArgsConstructor @Getter @Setter 
 @ToString @EqualsAndHashCode
-public class ResultadoGeoapify {
+public class FeaturesRouting {
 
-	private String lat;
-	private String lon;
+	private List<PropertyFeature> properties;
 	
 }
