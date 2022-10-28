@@ -10,17 +10,8 @@ import lombok.ToString;
 
 @NoArgsConstructor @Getter @Setter 
 @ToString @EqualsAndHashCode
-public class ResultGeocoding {
+public class Rank {
 
-	private Integer housenumber;
-	private String street;
-	private String suburb;
-	private String city;
-	private String state;
-	private String postcode;
-	private String country;
-	private BigDecimal lat;
-	private BigDecimal lon;
-	private Rank rank;
+	private BigDecimal confidence;
 	
 }

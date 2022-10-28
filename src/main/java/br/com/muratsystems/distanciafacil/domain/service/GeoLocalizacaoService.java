@@ -1,16 +1,20 @@
 package br.com.muratsystems.distanciafacil.domain.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.gson.Gson;
 
@@ -31,23 +35,49 @@ public class GeoLocalizacaoService {
 	
 	private Gson gson = new Gson();
 
-	public void definirGeoLocalizacaoPorEndereco(Endereco endereco) {
-		String url = "https://api.geoapify.com/v1/geocode/search?text=" + endereco.getTipoLogradouro() + "%20"
-				+ endereco.getLogradouro().replace(" ", "%20") + "%2C%20" + endereco.getNumero() + "%20"
-				+ endereco.getBairro().replace(" ", "%20") + "%2C%20" + endereco.getCidade().replace(" ", "%20")
-				+ "%2C%20" + endereco.getUf() + "%2C%20" + endereco.getCep()
-				+ "&format=json&apiKey=" + CHAVE_API;
-
-		Optional<Geocoding> optGeocoding = Optional.of(gson.fromJson(getJsonGeoapify(url).body(), Geocoding.class));
-		if (optGeocoding.isPresent()) {
-			var geoLocalizacao = new GeoLocalizacao();
-			geoLocalizacao.setLatitude(new BigDecimal(optGeocoding.get().getResults().get(0).getLat()));
-			geoLocalizacao.setLongitude(new BigDecimal(optGeocoding.get().getResults().get(0).getLon()));
-			endereco.setGeoLocalizacao(geoLocalizacao);
-			// Ver se vai ter exception para o BigDecimal
+	public List<Endereco> definirEnderecos(List<String> enderecosString) {
+		if (enderecosString == null || enderecosString.size() < 3) {
+			throw new BusinessException("Deve ser informado no mínimo 3 endereços!");
 		}
+		List<Endereco> enderecos = new ArrayList<>();
+		for (String enderecoString : enderecosString) {
+			definirEnderecoComGeoLocalizacao(enderecoString)
+				.ifPresent((endereco) -> {
+					enderecos.add(endereco);
+				});
+		}
+		return enderecos;
 	}
-
+	
+	public Optional<Endereco> definirEnderecoComGeoLocalizacao(String enderecoString) {
+		var endereco = new Endereco();
+		var optGeocoding = getGeocodingGeoapify(enderecoString);
+		if (optGeocoding.isPresent()) {
+			
+			///// Definir pelo rank
+			
+			endereco.setLogradouro(optGeocoding.get().getResults().get(0).getStreet());
+			endereco.setNumero(optGeocoding.get().getResults().get(0).getHousenumber());
+			endereco.setBairro(optGeocoding.get().getResults().get(0).getSuburb());
+			endereco.setCidade(optGeocoding.get().getResults().get(0).getCity());
+			endereco.setUf(optGeocoding.get().getResults().get(0).getState());
+			endereco.setPais(optGeocoding.get().getResults().get(0).getCountry());
+			endereco.setCep(optGeocoding.get().getResults().get(0).getPostcode());
+			var geoLocalizacao = new GeoLocalizacao();
+			geoLocalizacao.setLatitude(optGeocoding.get().getResults().get(0).getLat());
+			geoLocalizacao.setLongitude(optGeocoding.get().getResults().get(0).getLon());
+			endereco.setGeoLocalizacao(geoLocalizacao);
+		}
+		return Optional.of(endereco);
+	}
+	
+	public Optional<Geocoding> getGeocodingGeoapify(String endereco) {
+		String url = "https://api.geoapify.com/v1/geocode/search?text=";
+		url += endereco.replace(".", "%2E").replace(" ", "%20").replace(",", "%2C").replace("/", "%2F");
+		url += "&format=json&apiKey=" + CHAVE_API;
+		return Optional.of(gson.fromJson(getJsonGeoapify(url).body(), Geocoding.class));
+	}
+	
 	public DistanciaRota definirDistanciaEntreEnderecos(Endereco enderecoA, Endereco enderecoB) {
 		String url = "https://api.geoapify.com/v1/routing?waypoints="
 				+ enderecoA.getGeoLocalizacao().getLatitude() + "%2C" 
@@ -55,20 +85,22 @@ public class GeoLocalizacaoService {
 				+ enderecoB.getGeoLocalizacao().getLatitude() + "%2C" 
 				+ enderecoB.getGeoLocalizacao().getLongitude()
 				+ "&mode=drive&apiKey=" + CHAVE_API;	
-		Optional<Routing> optRouting = Optional.of(gson.fromJson(teste(url).body().toString(), Routing.class));
-		if (optRouting.isPresent()) {
-			var distanciaRota = new DistanciaRota();
-			var propertyFeature = optRouting.get().getFeatures().get(0).getProperties().get(0);
-			distanciaRota.setEnderecoA(enderecoA);
-			distanciaRota.setEnderecoB(enderecoB);
-			distanciaRota.setDistanciaEntreEnderecos(
-					new BigDecimal(propertyFeature.getDistance())
-					.divide(new BigDecimal("1000"), 3 , RoundingMode.HALF_EVEN));
-			distanciaRota.setUnidadeDistancia("KM");
-			// Ver se vai ter exception para o BigDecimal
-			return distanciaRota;
-		}
-		throw new BusinessException("Rota não encontrada!");
+//		Optional<Routing> optRouting = Optional.of(gson.fromJson(teste(url).body().toString(), Routing.class));
+//		if (optRouting.isPresent()) {
+//			var distanciaRota = new DistanciaRota();
+//			var propertyFeature = optRouting.get().getFeatures().get(0).getProperties().get(0);
+//			distanciaRota.setEnderecoA(enderecoA);
+//			distanciaRota.setEnderecoB(enderecoB);
+//			distanciaRota.setDistanciaEntreEnderecos(
+//					new BigDecimal(propertyFeature.getDistance())
+//					.divide(new BigDecimal("1000"), 3 , RoundingMode.HALF_EVEN));
+//			distanciaRota.setUnidadeDistancia("KM");
+//			// Ver se vai ter exception para o BigDecimal
+//			return distanciaRota;
+//		}
+//		throw new BusinessException("Rota não encontrada!");
+		testeRestTemplate(enderecoA, enderecoB);
+		return null;
 	}
 
 	private HttpResponse<String> getJsonGeoapify(String url) {
@@ -95,6 +127,31 @@ public class GeoLocalizacaoService {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private void testeRestTemplate(Endereco enderecoA, Endereco enderecoB) {
+		RestTemplate template = new RestTemplate();
+		List<String> waypoints = new ArrayList<>(); 
+		waypoints.add(enderecoA.getGeoLocalizacao().getLatitude().toString());
+		waypoints.add(enderecoA.getGeoLocalizacao().getLongitude().toString());
+		waypoints.add(enderecoB.getGeoLocalizacao().getLatitude().toString());
+		waypoints.add(enderecoB.getGeoLocalizacao().getLongitude().toString());
+		UriComponents uri = UriComponentsBuilder.newInstance()
+				.scheme("https")
+				.host("api.geoapify.com")
+				.path("v1/routing")
+				.queryParam("waypoints", enderecoA.getGeoLocalizacao().getLatitude(), 
+						enderecoA.getGeoLocalizacao().getLongitude(),
+						"%7C",
+						enderecoB.getGeoLocalizacao().getLatitude(),
+						enderecoB.getGeoLocalizacao().getLongitude())
+				.queryParam("mode", "drive")
+				.queryParam("apiKey", CHAVE_API)
+				.build();
+		
+		ResponseEntity<Routing> entity = template.getForEntity(uri.toUriString(), Routing.class);
+		var routing = entity.getBody();
+		System.out.println(routing);
 	}
 
 }
