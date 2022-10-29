@@ -8,10 +8,14 @@ import lombok.ToString;
 
 @NoArgsConstructor @Getter @Setter 
 @ToString @EqualsAndHashCode
-public class PropertyFeature {
+public class Parsed {
 
-	private String mode;
-	private String distance;
-	private String distance_units;
+	private String housenumber;
+	private String street;
+	private String suburb;
+	private String postcode;
+	private String city;
+	private String state;
+	private String country;
 	
 }

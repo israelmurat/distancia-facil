@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor @Getter @Setter 
+@NoArgsConstructor 
+@Getter @Setter 
 @ToString @EqualsAndHashCode
 public class Endereco {
 
-	private String tipoLogradouro;
 	private String logradouro;
-	private Integer numero;
+	private String numero;
 	private String bairro;
 	private String cidade;
 	private String uf;

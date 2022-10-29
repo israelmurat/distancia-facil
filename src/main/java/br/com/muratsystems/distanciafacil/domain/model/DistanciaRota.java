@@ -2,6 +2,7 @@ package br.com.muratsystems.distanciafacil.domain.model;
 
 import java.math.BigDecimal;
 
+import br.com.muratsystems.distanciafacil.domain.enuns.UnidadeDistancia;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ public class DistanciaRota {
 	private Endereco enderecoA;
 	private Endereco enderecoB;
 	private BigDecimal distanciaEntreEnderecos;
-	private String unidadeDistancia;
+	private UnidadeDistancia unidadeDistancia;
 	
 }

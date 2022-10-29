@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.muratsystems.distanciafacil.api.dto.DistanciaDto;
+import br.com.muratsystems.distanciafacil.domain.model.DistanciaRota;
 import br.com.muratsystems.distanciafacil.domain.model.Endereco;
 import br.com.muratsystems.distanciafacil.domain.service.DistanciaRotaService;
 import br.com.muratsystems.distanciafacil.domain.service.GeoLocalizacaoService;
@@ -30,7 +31,7 @@ public class DistanciaController {
 	@ResponseStatus(HttpStatus.CREATED) 
 	public ResponseEntity<DistanciaDto> calcularDistancias(@RequestBody List<String> enderecosString) {
 		List<Endereco> enderecos = geoLocalizacaoService.definirEnderecos(enderecosString);
-		
+		List<DistanciaRota> distanciasRota = distanciaRotaService.calcularDistanciaEnderecos(enderecos);
 		return ResponseEntity.ok(new DistanciaDto());
 	}
 	

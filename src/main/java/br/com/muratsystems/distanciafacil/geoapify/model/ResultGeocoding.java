@@ -12,11 +12,11 @@ import lombok.ToString;
 @ToString @EqualsAndHashCode
 public class ResultGeocoding {
 
-	private Integer housenumber;
+	private String housenumber;
 	private String street;
 	private String suburb;
 	private String city;
-	private String state;
+	private String state_code;
 	private String postcode;
 	private String country;
 	private BigDecimal lat;
