@@ -1,4 +1,4 @@
-package br.com.muratsystems.distanciafacil.domain.model;
+package br.com.muratsystems.distanciafacil.api.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @NoArgsConstructor 
 @Getter @Setter 
 @ToString @EqualsAndHashCode
-public class Endereco {
+public class EnderecoDto {
 
 	private String logradouro;
 	private String numero;
@@ -18,10 +18,5 @@ public class Endereco {
 	private String uf;
 	private String pais;
 	private String cep;
-	private Coordenada coordenada;
-	
-	public Endereco(String logradouro) {
-		this.logradouro = logradouro;
-	}
 	
 }

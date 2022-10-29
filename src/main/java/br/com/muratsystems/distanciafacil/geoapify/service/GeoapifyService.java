@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -19,7 +20,8 @@ public class GeoapifyService {
 	
 	private static final String CHAVE_API = "7f7d03b570294eb9ad3d6409058fdb6b";
 	
-	private Gson gson = new Gson();
+	@Autowired
+	private Gson gson;
 
 	public Optional<Geocoding> getGeocodingGeoapify(String endereco) {
 		String url = "https://api.geoapify.com/v1/geocode/search?text=";

@@ -54,14 +54,14 @@ public class DistanciaRotaService {
 
 		// Conversão de graus pra radianos das latitudes
 		double latitudeARadiano = Math
-				.toRadians(distanciaRota.getEnderecoA().getGeoLocalizacao().getLatitude().doubleValue());
+				.toRadians(distanciaRota.getEnderecoA().getCoordenada().getLatitude().doubleValue());
 		double latitudeBRadiano = Math
-				.toRadians(distanciaRota.getEnderecoB().getGeoLocalizacao().getLatitude().doubleValue());
+				.toRadians(distanciaRota.getEnderecoB().getCoordenada().getLatitude().doubleValue());
 
 		// Diferença das longitudes
 		double deltaLongitudeRadiano = Math
-				.toRadians(distanciaRota.getEnderecoB().getGeoLocalizacao().getLongitude().doubleValue()
-						- distanciaRota.getEnderecoA().getGeoLocalizacao().getLongitude().doubleValue());
+				.toRadians(distanciaRota.getEnderecoB().getCoordenada().getLongitude().doubleValue()
+						- distanciaRota.getEnderecoA().getCoordenada().getLongitude().doubleValue());
 
 		// Cálcula da distância entre os pontos
 		double distancia = Math

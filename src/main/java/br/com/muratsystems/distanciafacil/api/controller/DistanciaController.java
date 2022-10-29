@@ -32,7 +32,7 @@ public class DistanciaController {
 	public ResponseEntity<DistanciaDto> calcularDistancias(@RequestBody List<String> enderecosString) {
 		List<Endereco> enderecos = geoLocalizacaoService.definirEnderecos(enderecosString);
 		List<DistanciaRota> distanciasRota = distanciaRotaService.calcularDistanciaEnderecos(enderecos);
-		return ResponseEntity.ok(new DistanciaDto());
+		return ResponseEntity.ok(geoLocalizacaoService.definirDistanciaRetorno(distanciasRota));
 	}
 	
 }

@@ -13,5 +13,7 @@ import lombok.ToString;
 public class Rank {
 
 	private BigDecimal confidence;
+	private BigDecimal confidence_city_level;
+	private BigDecimal confidence_street_level;
 	
 }
