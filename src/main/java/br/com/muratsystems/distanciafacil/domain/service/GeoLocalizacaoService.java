@@ -40,30 +40,28 @@ public class GeoLocalizacaoService {
 
 	public Optional<Endereco> definirEnderecoComCoordenada(String enderecoString) {
 		var endereco = new Endereco();
-		var optGeocoding = geoapifyService.getGeocodingGeoapify(enderecoString);
-		if (optGeocoding.isPresent()) {
-
-			///// Definir pelo rank
-
-			endereco.setLogradouro(optGeocoding.get().getResults().get(0).getStreet());
-			endereco.setNumero(optGeocoding.get().getResults().get(0).getHousenumber());
-			endereco.setBairro(optGeocoding.get().getResults().get(0).getSuburb());
-			endereco.setCidade(optGeocoding.get().getResults().get(0).getCity());
-			endereco.setUf(optGeocoding.get().getResults().get(0).getState_code());
-			endereco.setPais(optGeocoding.get().getResults().get(0).getCountry());
-			endereco.setCep(optGeocoding.get().getResults().get(0).getPostcode());
+		var optResultado = geoapifyService.getGeocodingGeoapify(enderecoString);
+		if (optResultado.isPresent()) {
+			endereco.setLogradouro(optResultado.get().getStreet());
+			endereco.setNumero(optResultado.get().getHousenumber());
+			endereco.setBairro(optResultado.get().getSuburb());
+			endereco.setCidade(optResultado.get().getCity());
+			endereco.setUf(optResultado.get().getState_code());
+			endereco.setPais(optResultado.get().getCountry());
+			endereco.setCep(optResultado.get().getPostcode());
 			var coordenada = new Coordenada();
-			coordenada.setLatitude(optGeocoding.get().getResults().get(0).getLat());
-			coordenada.setLongitude(optGeocoding.get().getResults().get(0).getLon());
+			coordenada.setLatitude(optResultado.get().getLat());
+			coordenada.setLongitude(optResultado.get().getLon());
 			endereco.setCoordenada(coordenada);
+			return Optional.of(endereco);
 		}
-		return Optional.of(endereco);
+		throw new BusinessException("Endereço " + enderecoString + " não encontrado no serviço de Geocoding");
 	}
 
 	public DistanciaDto definirDistanciaRetorno(List<DistanciaRota> distanciasRota) {
 		if (!distanciasRota.isEmpty()) {
 			var distanciaDto = new DistanciaDto();
-			List<DistanciaRotaDto> distancias = new ArrayList<>(); 
+			List<DistanciaRotaDto> distancias = new ArrayList<>();
 			var maisProxima = new DistanciaRota();
 			var maisDistante = new DistanciaRota();
 			for (var rota : distanciasRota) {
@@ -87,7 +85,7 @@ public class GeoLocalizacaoService {
 		}
 		throw new BusinessException("Endereços não encontrados no serviço de Geocoding");
 	}
-	
+
 	private DistanciaRotaDto toDistanciaRotaDto(DistanciaRota entity) {
 		return modelMapper.map(entity, DistanciaRotaDto.class);
 	}

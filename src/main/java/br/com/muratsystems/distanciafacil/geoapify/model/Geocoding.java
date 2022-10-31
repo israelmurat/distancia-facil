@@ -13,6 +13,5 @@ import lombok.ToString;
 public class Geocoding {
 
 	private List<ResultGeocoding> results;
-	private Query query;
 	
 }
