@@ -1,5 +1,5 @@
 # API REST distancia-facil - versão 1.0.0
-<p align="center">API para calcular a distancia entre os enderecos informados</p>
+<p align="center">API para calcular a distancia entre os enderecos informados utilizando o serviço de geolocalização Geoapify</p>
 <br />
 <p>A API pode ser acessada de duas formas:<br/><br/>
 1) Através de endereços digitados manualmente:<br/>
@@ -12,7 +12,7 @@ JSON de exemplo:<br/>
     "Rua Jose Luiz Flaquer, 687, Éden, Sorocaba, SP",
     "Av. Independência, 1500, Éden, Sorocaba, SP"
 ]<br/><br/> 
-1) Através de endereços estruturados:<br/>
+2) Através de endereços estruturados:<br/>
 URL: localhost:8080/distancias/enderecos<br/>
 JSON de exemplo:<br/>
 [
