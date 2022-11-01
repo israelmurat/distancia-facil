@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.muratsystems.distanciafacil.domain.enuns.UnidadeDistancia;
+import br.com.muratsystems.distanciafacil.domain.exception.BusinessException;
 import br.com.muratsystems.distanciafacil.domain.model.DistanciaRota;
 import br.com.muratsystems.distanciafacil.domain.model.Endereco;
 
@@ -69,26 +70,32 @@ public class DistanciaRotaService {
 	 */
 	public void calcularDistanciaEmKmEntrePontos(DistanciaRota distanciaRota) {
 
-		// Conversão de graus pra radianos das latitudes
-		double latitudeARadiano = Math
-				.toRadians(distanciaRota.getEnderecoA().getCoordenada().getLatitude().doubleValue());
-		double latitudeBRadiano = Math
-				.toRadians(distanciaRota.getEnderecoB().getCoordenada().getLatitude().doubleValue());
+		try {
+		
+			// Conversão de graus pra radianos das latitudes
+			double latitudeARadiano = Math
+					.toRadians(distanciaRota.getEnderecoA().getCoordenada().getLatitude().doubleValue());
+			double latitudeBRadiano = Math
+					.toRadians(distanciaRota.getEnderecoB().getCoordenada().getLatitude().doubleValue());
+	
+			// Diferença das longitudes
+			double deltaLongitudeRadiano = Math
+					.toRadians(distanciaRota.getEnderecoB().getCoordenada().getLongitude().doubleValue()
+							- distanciaRota.getEnderecoA().getCoordenada().getLongitude().doubleValue());
+	
+			// Cálcula da distância entre os pontos
+			double distancia = Math
+					.acos(Math.cos(latitudeARadiano) * Math.cos(latitudeBRadiano) * Math.cos(deltaLongitudeRadiano)
+							+ Math.sin(latitudeARadiano) * Math.sin(latitudeBRadiano))
+					* RAIO_TERRA_KM;
+	
+			distanciaRota.setDistanciaEntreEnderecos(new BigDecimal(distancia).setScale(3, RoundingMode.HALF_EVEN));
+			distanciaRota.setUnidadeDistancia(UnidadeDistancia.KM);
 
-		// Diferença das longitudes
-		double deltaLongitudeRadiano = Math
-				.toRadians(distanciaRota.getEnderecoB().getCoordenada().getLongitude().doubleValue()
-						- distanciaRota.getEnderecoA().getCoordenada().getLongitude().doubleValue());
-
-		// Cálcula da distância entre os pontos
-		double distancia = Math
-				.acos(Math.cos(latitudeARadiano) * Math.cos(latitudeBRadiano) * Math.cos(deltaLongitudeRadiano)
-						+ Math.sin(latitudeARadiano) * Math.sin(latitudeBRadiano))
-				* RAIO_TERRA_KM;
-
-		distanciaRota.setDistanciaEntreEnderecos(new BigDecimal(distancia).setScale(3, RoundingMode.HALF_EVEN));
-		distanciaRota.setUnidadeDistancia(UnidadeDistancia.KM);
-
+		} catch (Exception e) {
+			throw new BusinessException("Erro ao calcular distância entre os endereços!");
+		}
+		
 	}
 
 }

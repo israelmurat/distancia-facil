@@ -62,7 +62,6 @@ public class DistanciaRotaServiceTest {
 		assertNotNull(rota.getUnidadeDistancia());
 		assertEquals(new BigDecimal("437.750"), rota.getDistanciaEntreEnderecos());
 		assertEquals(UnidadeDistancia.KM, rota.getUnidadeDistancia());
-		
 	}
 
 }
